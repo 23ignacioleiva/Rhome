@@ -172,6 +172,35 @@ body.en-panel .carrito-btn,body.en-panel .drawer,body.en-panel .velo{display:non
 .sim{display:flex;gap:10px;align-items:center;margin-top:16px;font-size:14px;font-weight:600;background:var(--rosa-suave);padding:12px;border-radius:12px;min-height:48px}
 .sim input{width:20px;height:20px;accent-color:var(--rosa)}
 body.en-panel #pie{display:none}
+.cat-head h2 span{font-family:var(--texto);font-size:13px;font-weight:500;color:var(--gris);letter-spacing:0}
+.orden{font-size:12px;color:var(--gris);font-weight:600;display:flex;align-items:center;gap:6px}
+.orden select{font-family:inherit;font-size:13px;font-weight:600;color:var(--tinta);border:1px solid var(--linea);border-radius:8px;height:36px;padding:0 8px;background:#fff}
+.fav{position:absolute;right:8px;bottom:8px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.95);color:var(--tinta);display:grid;place-items:center}
+.off{color:var(--verde);font-weight:700}
+.ultimas{font-size:12px;font-weight:700;color:#C25400}
+.fila-sec{margin:8px 0 40px}
+.carrusel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:16px;padding-bottom:6px;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+.carrusel::-webkit-scrollbar{display:none}
+.mini-card{flex:none;width:148px;scroll-snap-align:start;cursor:pointer}
+.mini-card .mimg{aspect-ratio:1/1;border-radius:12px;background-size:cover;background-position:center;background-color:var(--fondo);position:relative}
+.mini-card .mimg span{position:absolute;left:6px;top:6px;background:var(--verde);color:#fff;font-size:11px;font-weight:700;padding:3px 6px;border-radius:6px}
+.mini-card b{display:block;font-family:var(--display);font-size:17px;margin-top:8px}
+.mini-card small{display:block;font-size:12px;color:var(--gris);line-height:1.3;margin-top:2px}
+.h-acc{display:flex;gap:8px}
+.det-info{margin-top:20px;border-top:1px solid var(--linea)}
+.det-info div{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--linea);font-size:14px}
+.det-info svg{flex:none}
+.naranja{color:#C25400}
+.juntos{margin-top:20px;border:1px solid var(--linea);border-radius:14px;padding:14px}
+.juntos h4{font-family:var(--display);font-size:16px;margin-bottom:12px}
+.juntos .fotos{display:flex;align-items:center;gap:6px}
+.juntos .fotos i{width:64px;height:64px;border-radius:10px;background-size:cover;background-position:center;background-color:var(--fondo);flex:none}
+.juntos .fotos em{font-style:normal;font-weight:700;color:var(--gris)}
+.juntos .nombres{font-size:12px;color:var(--gris);margin-top:10px;line-height:1.5}
+.juntos .tj{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-weight:600}
+.juntos .tj b{font-family:var(--display);font-size:20px}
+.juntos button{width:100%;margin-top:12px;height:48px;border-radius:10px;background:var(--tinta);color:#fff;font-weight:700;font-size:14px}
+.btn-preg{width:100%;margin-top:12px;height:48px;border-radius:10px;border:1.5px solid var(--linea);font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
 </style>
 </head>
 <body>
@@ -204,11 +233,19 @@ body.en-panel #pie{display:none}
     <div class="ben"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D6006F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Retiro en Av. Calchaquí 3016</b><small>O coordinamos el envío por WhatsApp</small></div></div>
   </section>
 
+  <section class="fila-sec">
+    <div class="cat-head"><h2>Ofertas del día</h2><span>Precio llevando por cantidad</span></div>
+    <div class="carrusel" id="ofertas"></div>
+  </section>
   <section id="catalogo">
-    <div class="cat-head"><h2>Productos</h2><span id="cuenta"></span></div>
+    <div class="cat-head"><h2>Productos <span id="cuenta"></span></h2><label class="orden">Ordenar <select id="orden"><option value="rel">Más relevantes</option><option value="menor">Menor precio</option><option value="mayor">Mayor precio</option><option value="off">Mayor descuento</option></select></label></div>
     <div class="buscar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E6268" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="q" placeholder="Buscar sábanas, termos, perfumes…"></div>
     <div class="cats" id="cats"></div>
     <div class="grid" id="grid"></div>
+  </section>
+  <section class="fila-sec" id="vistosSec" hidden>
+    <div class="cat-head"><h2>Vistos recientemente</h2></div>
+    <div class="carrusel" id="vistos"></div>
   </section>
 </main>
 <footer id="pie"><div class="fin"><div><b>RHOME</b><br>Mayorista de hogar · Av. Calchaquí 3016, Quilmes Oeste</div><div>Pedidos por WhatsApp · Instagram @rhome.mayorista · TikTok</div><div class="demo-nota">Demo de propuesta · precios de ejemplo</div></div></footer>
@@ -268,7 +305,19 @@ const P = [
 ];
 const fmt = n => "$" + Math.round(n).toLocaleString("es-AR");
 const $ = s => document.querySelector(s);
-let cat = "Todo", q = "", cart = {}, pago = "efectivo", entrega = "retiro", simFinde = false;
+let cat = "Todo", q = "", cart = {}, pago = "efectivo", entrega = "retiro", simFinde = false, orden = "rel", vistos = [], fav = new Set();
+try{fav=new Set(JSON.parse(localStorage.getItem("rhomeFav")||"[]"))}catch(e){}
+const guardarFav=()=>{try{localStorage.setItem("rhomeFav",JSON.stringify([...fav]))}catch(e){}};
+const off=p=>Math.round((1-p.tp/p.p)*100);
+const corazon=on=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="${on?"#D6006F":"none"}" stroke="${on?"#D6006F":"currentColor"}" stroke-width="2" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>`;
+const ico=d=>`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6E6268" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+function toggleFav(id){fav.has(id)?fav.delete(id):fav.add(id);guardarFav();toast(fav.has(id)?"Agregado a favoritos":"Quitado de favoritos");if(cat==="Favoritos"&&!fav.size)cat="Todo";renderCats();refresh()}
+function miniCard(p){return `<div class="mini-card" data-ver="${p.id}"><div class="mimg" style="background-image:url(${IMG[p.i]});background-position:${p.pos}"><span>${off(p)}% OFF</span></div><b>${fmt(p.tp)}</b><small>${p.n}</small><small>llevando ${p.tq}+ · antes ${fmt(p.p)}</small></div>`}
+function renderExtras(){
+  $("#ofertas").innerHTML=P.filter(p=>p.s>0).sort((a,b)=>off(b)-off(a)).slice(0,6).map(miniCard).join("");
+  $("#vistosSec").hidden=!vistos.length;
+  $("#vistos").innerHTML=vistos.map(id=>miniCard(P.find(p=>p.id==id))).join("");
+}
 const stats = {vis:1284, ped:96, monto:96*31800, adds:{1:58,6:41,8:37,3:33,13:29,5:26,11:21}, dias:[11,14,9,16,13,18,15], origen:{Instagram:61,TikTok:22,"WhatsApp / directo":17}, links:{1:84,13:61,8:47}};
 
 const esFinde = () => simFinde || [5,6,0].includes(new Date().getDay());
@@ -278,7 +327,7 @@ function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");cl
 function renderHoy(){
   $("#hoyPromo").innerHTML = (esFinde() ? "<b>HOY 10% OFF</b> con todos los medios de pago" : "<b>HOY 5% OFF</b> pagando en efectivo") + " · Sin compra mínima";
 }
-function renderCats(){$("#cats").innerHTML=CATS.map(c=>`<button class="cat ${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("")}
+function renderCats(){$("#cats").innerHTML=(fav.size?[...CATS,"Favoritos"]:CATS).map(c=>`<button class="cat ${c===cat?"on":""}" data-c="${c}">${c==="Favoritos"?"♥ Favoritos ("+fav.size+")":c}</button>`).join("")}
 function ctrl(p,largo){
   const k=cart[p.id]||0;
   if(p.s===0)return `<div class="add solo" disabled>Sin stock</div>`;
@@ -288,15 +337,17 @@ function nivel(p){
   const k=cart[p.id]||0;
   if(k>=p.tq)return `<div class="mayo ok">✓ Precio mayorista: ${fmt(p.tp)} c/u</div>`;
   if(k>0)return `<div class="mayo">Sumá ${p.tq-k} más y pagás ${fmt(p.tp)} c/u</div>`;
-  return `<div class="pack">Llevando ${p.tq}+: <b>${fmt(p.tp)}</b> c/u</div>`;
+  return `<div class="pack"><b>${fmt(p.tp)}</b> llevando ${p.tq}+ <span class="off">${off(p)}% OFF</span></div>`;
 }
 const compartirIco=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>`;
 function renderGrid(){
-  const list=P.filter(p=>(cat==="Todo"||p.c===cat)&&p.n.toLowerCase().includes(q));
-  $("#cuenta").textContent=list.length+(list.length===1?" producto":" productos");
+  const list=P.filter(p=>(cat==="Todo"||(cat==="Favoritos"?fav.has(p.id):p.c===cat))&&p.n.toLowerCase().includes(q));
+  if(orden==="menor")list.sort((a,b)=>a.p-b.p);else if(orden==="mayor")list.sort((a,b)=>b.p-a.p);else if(orden==="off")list.sort((a,b)=>off(b)-off(a));
+  $("#cuenta").textContent="· "+list.length;
   $("#grid").innerHTML=list.length?list.map(p=>{
     const k=cart[p.id]||0, u=unit(p,Math.max(k,1));
-    return `<div class="card"><div class="img" data-ver="${p.id}" style="background-image:url(${IMG[p.i]});background-position:${p.pos}">${p.t?`<span class="tag">${p.t}</span>`:""}<button class="share" data-sh="${p.id}" aria-label="Compartir">${compartirIco}</button>${p.s===0?`<div class="agotado">Sin stock</div>`:""}</div><div class="info"><h3 data-ver="${p.id}">${p.n}</h3><div class="precio">${k>=p.tq?`<s>${fmt(p.p)}</s> `:""}${fmt(u)}</div>${nivel(p)}${ctrl(p)}</div></div>`}).join(""):`<div class="vacio" style="grid-column:1/-1">No encontramos "${q}"</div>`;
+    return `<div class="card"><div class="img" data-ver="${p.id}" style="background-image:url(${IMG[p.i]});background-position:${p.pos}">${p.t?`<span class="tag">${p.t}</span>`:""}<button class="share" data-sh="${p.id}" aria-label="Compartir">${compartirIco}</button><button class="fav" data-fav="${p.id}" aria-label="Favorito">${corazon(fav.has(p.id))}</button>${p.s===0?`<div class="agotado">Sin stock</div>`:""}</div><div class="info"><h3 data-ver="${p.id}">${p.n}</h3><div class="precio">${k>=p.tq?`<s>${fmt(p.p)}</s> `:""}${fmt(u)}</div>${nivel(p)}${p.s>0&&p.s<=5?`<div class="ultimas">¡Últimas ${p.s} unidades!</div>`:""}${ctrl(p)}</div></div>`}).join(""):`<div class="vacio" style="grid-column:1/-1">No encontramos "${q}"</div>`;
+  renderExtras();
 }
 function items(){return Object.entries(cart).map(([id,k])=>({p:P.find(x=>x.id==id),k}))}
 const lista = () => items().reduce((s,{p,k})=>s+p.p*k,0);
@@ -327,16 +378,25 @@ function renderDrawer(){
 }
 function renderDetalle(id){
   const p=P.find(x=>x.id==id);if(!p)return;window._det=id;
-  $("#detalle").innerHTML=`<h2>${p.c}<button data-cerrar aria-label="Cerrar">✕</button></h2>
+  let otros=P.filter(x=>x.id!==p.id&&x.s>0&&x.c===p.c);if(otros.length<2)otros=otros.concat(P.filter(x=>x.id!==p.id&&x.s>0&&x.c!==p.c&&(x.t)));otros=otros.slice(0,2);
+  const trio=[p,...otros], totTrio=trio.reduce((s,x)=>s+x.p,0);
+  $("#detalle").innerHTML=`<h2>${p.c}<span class="h-acc"><button data-fav="${p.id}" aria-label="Favorito">${corazon(fav.has(p.id))}</button><button data-cerrar aria-label="Cerrar">✕</button></span></h2>
   <div class="det-img" style="background-image:url(${IMG[p.i]});background-position:${p.pos}"></div>
   <h3 class="det-n">${p.n}</h3>
   <div class="escalas"><div class="${(cart[p.id]||0)<p.tq?"on":""}"><small>Por unidad</small><b>${fmt(p.p)}</b></div><div class="${(cart[p.id]||0)>=p.tq?"on":""}"><small>Llevando ${p.tq} o más</small><b>${fmt(p.tp)} c/u</b></div></div>
   ${nivel(p)}
-  <div class="det-acc">${ctrl(p,true)}<button class="btn-sec" data-sh="${p.id}">${compartirIco} Compartir</button></div>`;
+  <div class="det-acc">${ctrl(p,true)}<button class="btn-sec" data-sh="${p.id}">${compartirIco} Compartir</button></div>
+  <div class="det-info">
+    <div>${ico('<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/>')}<span><b class="verde">Retiro gratis</b> en Av. Calchaquí 3016</span></div>
+    <div>${ico('<path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/>')}<span>${p.s===0?"Sin stock por ahora":p.s<=5?`<b class="naranja">¡Últimas ${p.s} unidades!</b>`:`Stock disponible · ${p.s} unidades`}</span></div>
+    <div>${ico('<rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/>')}<span>${esFinde()?"<b>10% OFF hoy</b> con todos los medios de pago":"<b>5% OFF</b> pagando en efectivo"}</span></div>
+  </div>
+  ${otros.length?`<div class="juntos"><h4>Se compran juntos</h4><div class="fotos">${trio.map((x,i)=>`${i?"<em>+</em>":""}<i style="background-image:url(${IMG[x.i]});background-position:${x.pos}"></i>`).join("")}</div><div class="nombres">${trio.map(x=>x.n).join(" · ")}</div><div class="tj"><span>Total de los 3</span><b>${fmt(totTrio)}</b></div><button data-juntos="${trio.map(x=>x.id).join(",")}">Agregar los 3 al pedido</button></div>`:""}
+  <button class="btn-preg" data-preg="${p.id}">${ico('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>')} Preguntale al vendedor</button>`;
 }
 function abrir(el){$("#velo").classList.add("show");el.classList.add("show")}
 function cerrar(){["#drawer","#detalle"].forEach(s=>$(s).classList.remove("show"));$("#velo").classList.remove("show");if(location.hash)history.replaceState(null,"",location.pathname)}
-function verProducto(id){cerrar();renderDetalle(id);abrir($("#detalle"))}
+function verProducto(id){cerrar();vistos=[id,...vistos.filter(x=>x!==id)].slice(0,8);renderExtras();renderDetalle(id);abrir($("#detalle"))}
 async function compartir(id){
   const p=P.find(x=>x.id==id), url=location.href.split("#")[0]+"#p="+id;
   const texto=`${p.n} a ${fmt(p.p)} (llevando ${p.tq}: ${fmt(p.tp)} c/u) en Rhome Mayorista`;
@@ -378,6 +438,9 @@ function renderPanel(){
 document.addEventListener("click",e=>{
   const v=e.target.closest("[data-ver]"), t=e.target.closest("button");
   if(t&&t.dataset.sh){e.stopPropagation();compartir(+t.dataset.sh);return}
+  if(t&&t.dataset.fav){e.stopPropagation();toggleFav(+t.dataset.fav);return}
+  if(t&&t.dataset.juntos){t.dataset.juntos.split(",").forEach(id=>{if(!cart[id])add(+id)});toast("Agregaste los 3 al pedido");return}
+  if(t&&t.dataset.preg){const p=P.find(x=>x.id==t.dataset.preg);window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola Rhome! Tengo una consulta sobre: "+p.n)}`,"_blank");return}
   if(!t&&v){verProducto(+v.dataset.ver);return}
   if(!t)return;
   if(t.dataset.tile){cat=t.dataset.tile;renderCats();renderGrid();$("#catalogo").scrollIntoView();return}
@@ -396,6 +459,7 @@ $("#velo").onclick=cerrar;
 $("#q").oninput=e=>{q=e.target.value.toLowerCase().trim();renderGrid()};
 document.addEventListener("change",e=>{
   const t=e.target;
+  if(t.id==="orden"){orden=t.value;renderGrid();return}
   if(t.id==="simFinde"){simFinde=t.checked;renderHoy();renderPanel();renderBtn();toast(simFinde?"Ahora la tienda está en modo sábado":"Volvió al día de hoy");return}
   const p=P.find(x=>x.id==(t.dataset.pr||t.dataset.tp||t.dataset.st));if(!p)return;
   if(t.dataset.pr){p.p=Math.max(0,+t.value||0);toast("Precio actualizado en la tienda")}
